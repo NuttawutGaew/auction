@@ -3,6 +3,8 @@ import Navbar from "./components/Navbar";
 import logo from '../app/images/Logo.png';
 import Slideimage from './components/Slideimage';
 import Productpage from './product/page';
+// import Buttonmain from "../components/Buttonmain";
+
 
 export default function Home() {
   return (

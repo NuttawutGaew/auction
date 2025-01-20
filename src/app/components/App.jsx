@@ -1,12 +1,28 @@
 import React from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
+import LoginPage from '../login/page';
+import HomePage from './HomePage';
 
-function MyApp({ Component, pageProps }) {
+function App() {
   return (
-    <Router>
-      <Component {...pageProps} />
-    </Router>
+    <Routes>
+      <Route path="/" element={<LoginPage />} />
+      <Route path="/home" element={<HomePage />} />
+    </Routes>
   );
 }
 
-export default MyApp;
+export default App;
+
+// import React from 'react';
+// import { BrowserRouter as Router } from 'react-router-dom';
+
+// function MyApp({ Component, pageProps }) {
+//   return (
+//     <Router>
+//       <Component {...pageProps} />
+//     </Router>
+//   );
+// }
+
+// export default MyApp;

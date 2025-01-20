@@ -33,7 +33,7 @@ function RegisterPage() {
       }
 
       const res = await fetch(
-        "https://nodejs-for-test-vua7.onrender.com/api/v1/auth/register",
+        "https://mytest-eco5.onrender.com/api/v1/auth/register",
         {
           method: "POST",
           headers: {
@@ -67,7 +67,7 @@ function RegisterPage() {
     <div className="min-h-screen flex flex-col items-center justify-center bg-yellow-200">
       <Navbar />
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md mt-8">
-        <h2 className="text-2xl font-bold mb-6 text-center">สมัครสมาชิก</h2>
+        <h2 className="text-2xl font-bold mb-6 text-center">Register</h2>
         <form onSubmit={handleSubmit}>
             {error && (
                 <div className='bg-red-500 text-white p-2 my-2 rounded-md'>
@@ -143,7 +143,7 @@ function RegisterPage() {
             </button>
             <a
               href="/login"
-              className="inline-block align-baseline font-bold text-sm text-red-500 hover:text-red-800"
+              className="inline-block align-baseline font-bold text-sm text-green-500 hover:text-green-800"
             >
               Login!
             </a>
