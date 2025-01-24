@@ -1,6 +1,6 @@
 import React from 'react'
 import Image from 'next/image';
-import img_map from '../../../public/images/img_map.jpg'
+import img_map from '../../../../public/images/img_map.jpg'
 
 function ContactPage() {
   return (

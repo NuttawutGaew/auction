@@ -3,10 +3,10 @@ import Image from "next/image";
 import Navbar from "./components/Navbar";
 import logo from '../app/images/Logo.png';
 import Slideimage from './components/Slideimage';
-import Productpage from './product/page';
+import Productpage from './page/product/page';
 import ButtonMain from "./components/ButtonMain";
-import ProducttPage from './productt/page';
-import ContactPage from './contact/page';
+import ProducttPage from './page/productt/page';
+import ContactPage from './page/contact/page';
 
 export default function Home() {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
