@@ -63,9 +63,11 @@ function RegisterPage() {
     }
   };
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-yellow-200">
+    <div className="min-h-screen flex flex-col items-center justify-center  bg-cover bg-center"
+     style={{ backgroundImage: "url('/images/bgr.jpg')" }}
+    >
       <Navbar />
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md mt-8">
+      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md mt-8 bg-opacity-70 backdrop-blur-lg">
         <h2 className="text-2xl font-bold mb-6 text-center">Register</h2>
         <form onSubmit={handleSubmit}>
             {error && (
@@ -181,7 +183,7 @@ function RegisterPage() {
             </button>
             <a
               href="/page/login"
-              className="inline-block align-baseline font-bold text-sm text-green-500 hover:text-green-800"
+              className="inline-block align-baseline font-bold text-sm text-green-500 hover:text-white hover:bg-green-800 py-2 px-4 rounded"
             >
               Login!
             </a>

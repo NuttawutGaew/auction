@@ -28,7 +28,7 @@ function LoginPage() {
       });
       if (res.status === 200) {
         setIsLoggedIn(true);
-        window.location.href = '/'; // ใช้ window.location.href เพื่อเปลี่ยนเส้นทาง
+        window.location.href = '/page/homep'; // ใช้ window.location.href เพื่อเปลี่ยนเส้นทาง
       } else {
         const errorData = await res.json();
         throw new Error(errorData.msg || 'Login failed');
@@ -39,9 +39,11 @@ function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-yellow-600 flex flex-col items-center justify-center">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-cover bg-center"
+    style={{ backgroundImage: "url('/images/bgg.jpg')" }}
+    >
       <Navbar isLoggedIn={isLoggedIn}/>
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md mt-8">
+      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md mt-8 bg-opacity-70 backdrop-blur-lg">
          <h3 className="text-2xl font-bold mb-6 text-center">LOG IN</h3>
          <form onSubmit={handleSubmit}>
           {error && (
@@ -93,7 +95,7 @@ function LoginPage() {
 
           <div className="flex items-center justify-between">
             <button
-              href="/"
+              href="/page/homep"
               type="submit"
               className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             >
@@ -101,10 +103,10 @@ function LoginPage() {
             </button>
             <div>
               <a
-                href="/"
-                className="inline-block align-baseline font-bold text-sm text-green-500 hover:text-white hover:bg-green-700 py-2 px-2 rounded"
+                href="/page/forgot"
+                className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-white hover:bg-blue-700 py-2 px-2 rounded"
               >
-                Return to home page
+                Forgot password?
               </a>
               <a
                 href="/page/register"

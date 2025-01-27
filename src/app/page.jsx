@@ -7,6 +7,7 @@ import Productpage from './page/product/page';
 import ButtonMain from "./components/ButtonMain";
 import ProducttPage from './page/productt/page';
 import ContactPage from './page/contact/page';
+import ScrollToTop from './components/ScolltoTop'
 
 export default function Home() {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -39,6 +40,9 @@ export default function Home() {
           </div>
           <div id="contactt" className="w-full h-auto bg-[#333333]  ">
             <ContactPage />
+          </div>
+          <div>
+            <ScrollToTop />
           </div>
         </main>
       </div>

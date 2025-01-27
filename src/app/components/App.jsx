@@ -1,18 +1,12 @@
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import LoginPage from '../login/page';
-import HomePage from './HomePage';
+import { useSession } from 'next-auth/react';
 
-function App() {
+const App = () => {
+  const { data: session } = useSession();
+
   return (
-    <Routes>
-      <Route path="/" element={<LoginPage />} />
-      <Route path="/home" element={<HomePage />} />
-    </Routes>
+    <Navbar isLoggedIn={!!session} />
   );
-}
-
-export default App;
+};
 
 // import React from 'react';
 // import { BrowserRouter as Router } from 'react-router-dom';
