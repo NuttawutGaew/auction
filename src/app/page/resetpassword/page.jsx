@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useSearchParams, useRouter } from 'next/navigation';
@@ -19,15 +19,26 @@ const SetPassword = () => {
       return;
     }
 
+    if (!token) {
+      setMessage('Invalid or missing token.');
+      return;
+    }
+
     try {
-      const response = await axios.post('/api/auth/set-password', { token, password });
+      // ตรวจสอบว่า URL ใช้งานได้
+      const response = await axios.post(
+        'http://localhost:3000/api/auth/reset-password',
+        { token, password }
+      );
+
       if (response.status === 200) {
         setMessage('Password has been reset successfully.');
-        // Redirect to login page or another page
-        router.push('/page/login');
+        setTimeout(() => router.push('/page/login'), 1500); // Redirect หลังจาก 1.5 วินาที
       }
     } catch (error) {
-      setMessage('Error setting password.');
+      setMessage(
+        error.response?.data?.msg || 'Error setting password. Please try again.'
+      );
       console.error('Error:', error);
     }
   };
@@ -38,10 +49,18 @@ const SetPassword = () => {
       style={{ backgroundImage: "url('/images/sp.jpg')" }}
     >
       <Navbar />
-      <form onSubmit={handleSubmit} className="w-full max-w-sm bg-white p-6 rounded-xl shadow-md bg-opacity-70 backdrop-blur-lg">
-        <h1 className="text-2xl font-bold mb-4 flex items-center justify-center">Set New Password</h1>
+      <form
+        onSubmit={handleSubmit}
+        className="w-full max-w-sm bg-white p-6 rounded-xl shadow-md bg-opacity-70 backdrop-blur-lg"
+      >
+        <h1 className="text-2xl font-bold mb-4 flex items-center justify-center">
+          Set New Password
+        </h1>
         <div className="mb-4">
-          <label htmlFor="password" className="block text-gray-700 text-sm font-bold mb-2">
+          <label
+            htmlFor="password"
+            className="block text-gray-700 text-sm font-bold mb-2"
+          >
             New Password
           </label>
           <input
@@ -54,7 +73,10 @@ const SetPassword = () => {
           />
         </div>
         <div className="mb-4">
-          <label htmlFor="confirmPassword" className="block text-gray-700 text-sm font-bold mb-2">
+          <label
+            htmlFor="confirmPassword"
+            className="block text-gray-700 text-sm font-bold mb-2"
+          >
             Confirm Password
           </label>
           <input
@@ -73,7 +95,9 @@ const SetPassword = () => {
           Set Password
         </button>
       </form>
-      {message && <p className="mt-4 p-2 text-white bg-red-500 rounded-xl">{message}</p>}
+      {message && (
+        <p className="mt-4 p-2 text-white bg-red-500 rounded-xl">{message}</p>
+      )}
     </div>
   );
 };

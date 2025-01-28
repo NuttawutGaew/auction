@@ -10,10 +10,9 @@ const NavbarCustomer = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
+  const [token, setToken] = useState(null); // เพิ่ม state สำหรับ token
   const dropdownRef = useRef(null);
   const router = useRouter();
-  
 
   useEffect(() => {
     setMounted(true);
@@ -22,7 +21,7 @@ const NavbarCustomer = () => {
         const session = await getSession();
         if (session) {
           setUser(session.user);
-          setToken(session.accessToken);
+          setToken(session.accessToken); // เก็บ token จาก session
         }
       } catch (error) {
         console.error('Error fetching session:', error);
@@ -50,15 +49,21 @@ const NavbarCustomer = () => {
 
   const handleSignOut = async () => {
     try {
-      const response = await axios.post('/api/auth/signout', {}, {
+      const response = await fetch('/api/auth/logout', {
+        method: 'POST',
         headers: {
-          'Authorization': `Bearer ${token}` // ตรวจสอบให้แน่ใจว่ามีการส่ง token ที่ถูกต้อง
+          'Authorization': `Bearer ${token}`, // ตรวจสอบให้แน่ใจว่ามีการส่ง token ที่ถูกต้อง
+          'Content-Type': 'application/json'
         }
       });
+
       if (response.status === 200) {
         // ทำการ sign out สำเร็จ
         console.log('Signed out successfully');
-        router.push('/page/login');
+        setUser(null);
+        router.push('/'); // เปลี่ยนเส้นทางไปยังหน้า login
+      } else {
+        console.error('Error signing out:', response.statusText);
       }
     } catch (error) {
       console.error('Error signing out:', error);
