@@ -22,7 +22,11 @@ function ProductPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         {products.map((product) => (
           <div key={product.id} className="border rounded-lg p-4 bg-white">
-            <img src={product.image} alt={product.name} className="w-full h-auto mb-4 rounded-lg" />
+            <Link href={`/page/bid?id=${product.id}`} legacyBehavior>
+              <a>
+                <img src={product.image} alt={product.name} className="w-full h-auto mb-4 rounded-lg cursor-pointer" />
+              </a>
+            </Link>
             <div className="mb-2 text-center">
               <h3 className="text-lg font-semibold">{product.name}</h3>
             </div>
@@ -30,14 +34,6 @@ function ProductPage() {
               <h3 className="text-lg font-semibold">{product.price} บาท</h3>
               <h3 className="text-lg font-semibold text-red-500">00:10:00</h3>
             </div>
-            <Link href={`/bid`} legacyBehavior >
-              <a className="text-black rounded flex justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                </svg>
-              </a>
-            </Link>
           </div>
         ))}
       </div>

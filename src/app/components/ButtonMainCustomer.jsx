@@ -22,7 +22,7 @@ import Link from 'next/link';
 const Buttonmain = () => {
   return (
     <div className="flex gap-4">
-      <Link href="/page/homep" legacyBehavior>
+      <Link href="/page/homepage" legacyBehavior>
         <a className="text-yellow-400 px-4 py-2 rounded hover:bg-yellow-400 hover:text-white transition duration-50 ease-in-out transform hover:scale-105">หน้าหลัก</a>
       </Link>
 

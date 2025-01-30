@@ -28,7 +28,7 @@ function LoginPage() {
       });
       if (res.status === 200) {
         setIsLoggedIn(true);
-        window.location.href = '/page/homep'; // ใช้ window.location.href เพื่อเปลี่ยนเส้นทาง
+        window.location.href = '/page/homepage'; // ใช้ window.location.href เพื่อเปลี่ยนเส้นทาง
       } else {
         const errorData = await res.json();
         throw new Error(errorData.msg || 'Login failed');
@@ -95,7 +95,7 @@ function LoginPage() {
 
           <div className="flex items-center justify-between">
             <button
-              href="/page/homep"
+              href="/page/homepage"
               type="submit"
               className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             >
@@ -103,7 +103,7 @@ function LoginPage() {
             </button>
             <div>
               <a
-                href="/page/forgot"
+                href="/page/forgotpassword"
                 className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-white hover:bg-blue-700 py-2 px-2 rounded"
               >
                 Forgot password?

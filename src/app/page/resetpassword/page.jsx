@@ -1,45 +1,44 @@
 'use client';
 import React, { useState } from 'react';
-import axios from 'axios';
-import { useSearchParams, useRouter } from 'next/navigation';
 import Navbar from '../../components/Navbar';
+import { useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 
-const SetPassword = () => {
+const ResetPasswordPage = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [message, setMessage] = useState('');
-  const searchParams = useSearchParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const token = searchParams.get('token');
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
     if (password !== confirmPassword) {
       setMessage('Passwords do not match.');
       return;
     }
 
-    if (!token) {
-      setMessage('Invalid or missing token.');
-      return;
-    }
-
     try {
-      // ตรวจสอบว่า URL ใช้งานได้
-      const response = await axios.post(
-        'http://localhost:3000/api/auth/reset-password',
-        { token, password }
-      );
+      const response = await fetch('http://localhost:3000/api/auth/reset-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token, newPassword: password }),
+      });
 
-      if (response.status === 200) {
-        setMessage('Password has been reset successfully.');
-        setTimeout(() => router.push('/page/login'), 1500); // Redirect หลังจาก 1.5 วินาที
+      if (!response.ok) {
+        const errorData = await response.json();
+        setMessage(`Error: ${errorData.msg}`);
+        return;
       }
+
+      setMessage('Password reset successful.');
+      router.push('/page/login');
     } catch (error) {
-      setMessage(
-        error.response?.data?.msg || 'Error setting password. Please try again.'
-      );
-      console.error('Error:', error);
+      setMessage(`Error: ${error.message}`);
     }
   };
 
@@ -65,7 +64,6 @@ const SetPassword = () => {
           </label>
           <input
             type="password"
-            id="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -81,7 +79,6 @@ const SetPassword = () => {
           </label>
           <input
             type="password"
-            id="confirmPassword"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
@@ -92,14 +89,12 @@ const SetPassword = () => {
           type="submit"
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-xl focus:outline-none focus:shadow-outline"
         >
-          Set Password
+          Reset Password
         </button>
+        {message && <p className="mt-4 text-center text-red-500">{message}</p>}
       </form>
-      {message && (
-        <p className="mt-4 p-2 text-white bg-red-500 rounded-xl">{message}</p>
-      )}
     </div>
   );
 };
 
-export default SetPassword;
+export default ResetPasswordPage;

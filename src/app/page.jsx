@@ -5,7 +5,7 @@ import logo from '../app/images/Logo.png';
 import Slideimage from './components/Slideimage';
 import Productpage from './page/product/page';
 import ButtonMain from "./components/ButtonMain";
-import ProducttPage from './page/productt/page';
+import ProducttPage from './page/product-1/page';
 import ContactPage from './page/contact/page';
 import ScrollToTop from './components/ScolltoTop'
 
