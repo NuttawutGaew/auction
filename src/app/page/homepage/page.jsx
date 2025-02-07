@@ -12,7 +12,7 @@ import ButtonMainCustomer from '../../components/ButtonMainCustomer'
 
 function HomePage() {
   return (
-    <div className="min-h-screen p-0 m-0 font-[family-name:var(--font-geist-sans)] bg-[#333333]">
+    <div className="min-h-screen p-0 m-0 font-[family-name:var(--font-geist-sans)] bg-[#333333] md:p-0">
         <div>
             <NavbarCustomer />
         </div>

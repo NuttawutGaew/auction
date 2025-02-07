@@ -19,7 +19,7 @@
 import React from 'react'
 import Link from 'next/link';
 
-const Buttonmain = () => {
+const ButtonMainCustomer = () => {
   return (
     <div className="flex gap-4">
       <Link href="/page/homepage" legacyBehavior>
@@ -41,4 +41,4 @@ const Buttonmain = () => {
   );
 };
 
-export default Buttonmain ;
+export default ButtonMainCustomer ;

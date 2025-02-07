@@ -37,6 +37,31 @@ function LoginPage() {
       setError(error.message);
     }
   };
+  const handleSignOut = async () => {
+    try {
+      const response = await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Authorization': `Bearer ${token}`, // ตรวจสอบให้แน่ใจว่ามีการส่ง token ที่ถูกต้อง
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.status === 200) {
+        // ทำการ sign out สำเร็จ
+        console.log('Signed out successfully');
+        localStorage.removeItem('userToken'); // ลบ token ออกจาก localStorage
+        setIsLoggedIn(false);
+        router.push('/'); // เปลี่ยนเส้นทางไปยังหน้า login
+      } else {
+        const errorData = await response.json();
+        console.error('Error signing out:', errorData.msg || response.statusText);
+      }
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-cover bg-center"
