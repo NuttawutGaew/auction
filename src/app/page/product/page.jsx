@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 const products = [
   { id: 1, name: 'เก้าอี้สไตล์หลุยส์', images: ['/images/imgg.jpg','/images/p11.jpg','/images/p111.jpg','/images/p1111.jpg'], price: "7,000", description: 'เก้าอี้ สไตล์หลุยส์ เบาะหุ้มหนังแท้สีน้ำตาล ดึงดุมยึดหมุดทองเหลือง โครงไม้โอ๊ค(มี 2 ตัว)', description2: 'ขนาดกว้าง 53 ลึก 50 สูงนั่ง 36 สูงหลัง 79 เซนติเมตร', currentBid: "12,000" },
@@ -15,6 +16,21 @@ const products = [
 ];
 
 const ProductPage = () => {
+  const [timeLeft, setTimeLeft] = useState(180);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft(prevTime => (prevTime > 0 ? prevTime - 1 : 0));
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+  };
 
   return (
     <div className="p-2 max-w-7xl mx-auto bg-white"> 
@@ -44,7 +60,7 @@ const ProductPage = () => {
           </div>
           <div className="flex justify-between">
             <h3 className="text-lg font-semibold">{product.price} บาท</h3>
-            <h3 className="text-lg font-semibold text-red-500">00:10:00</h3>
+            <h3 className="text-lg font-semibold text-red-500">{formatTime(timeLeft)}</h3>
           </div>
         </div>
       ))}

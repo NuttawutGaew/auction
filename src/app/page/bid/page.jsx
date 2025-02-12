@@ -1,16 +1,22 @@
 'use client';
 import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import NavbarBids from '../../components/NavbarBids';
 import Button from '@mui/material/Button'
+import { Plus, Minus, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const BidPage = () => {
   const searchParams = useSearchParams();
   const [product, setProduct] = useState(null);
   const [showCard, setShowCard] = useState(false);
+  const [bidAmount, setBidAmount] = useState(Number(product?.currentBid) || 0);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(180); // 5 minutes countdown
+  const router = useRouter();
 
   useEffect(() => {
     const id = searchParams.get('id');
@@ -25,6 +31,35 @@ const BidPage = () => {
       setProduct({ id, name, images: JSON.parse(images), price, description, description2, currentBid });
     }
   }, [searchParams]);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft(prevTime => {
+        if (prevTime <= 1) {
+          clearInterval(timer);
+          router.push('/page/homepage'); // Redirect to auction page
+          return 0;
+        }
+        return prevTime - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [router]);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const response = await fetch('/api/auth/session');
+      if (response.ok) {
+        const session = await response.json();
+        console.log('User is authenticated:', session);
+      } else {
+        console.log('User is not authenticated');
+      }
+    };
+
+    checkAuth();
+  }, []);
 
   if (!product) {
     return (
@@ -47,6 +82,20 @@ const BidPage = () => {
     // Add your bid handling logic here
     console.log('Bid placed');
     setShowCard(false);
+  };
+  
+  const handleIncrement = () => {
+    setBidAmount(prev => prev + 50);
+  };
+
+  const handleDecrement = () => {
+    setBidAmount(prev => Math.max(Number(product?.currentBid) || 0, prev - 50));
+  };
+
+  const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
   };
 
   const settings = {
@@ -77,6 +126,9 @@ const BidPage = () => {
               <div className="mb-2 pl-4">
                 <h2 className="text-2xl font-semibold">{product.description}</h2>
               </div>
+              <div className='mt-4 ml-4 pt-4 border-t-2 border-gray-300'>
+                <h2 className="text-l font-semibold opacity-50">รายละเอียดสินค้า :</h2>
+              </div>
               <div className="mb-2 pl-4 py-2">
                 <h4 className="text-xl font-semibold">{product.description2}</h4>
               </div>
@@ -85,7 +137,7 @@ const BidPage = () => {
               <div className="mb-2 pl-4">
                 <h2 className="text-2xl font-bold">
                   <span className='opacity-50'>Ends in : </span>
-                  <span className='text-red-600'>00:10:00 </span>
+                  <span className='text-red-600'>{formatTime(timeLeft)} min.</span>
                 </h2>
               </div>
               <div className="mb-2 pl-4">
@@ -105,8 +157,27 @@ const BidPage = () => {
               <h3 className="text-2xl font-bold">
                 <span className='opacity-50'>Your Bid :</span>
               </h3>
-              <input type="number" className="border-2 border-gray-300 p-2 w-40" />
-              <button onClick={handleBidNow} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+              <div className="flex items-center space-x-2">
+            <button
+              onClick={handleDecrement}
+              className="bg-red-500 hover:bg-red-700 text-white p-2 rounded-full"
+            >
+              <Minus size={20} />
+            </button>
+            <input
+              type="number"
+              value={bidAmount}
+              onChange={(e) => setBidAmount(Number(e.target.value))}
+              className="border-2 border-gray-300 p-2 w-40 text-center"
+            />
+            <button
+              onClick={handleIncrement}
+              className="bg-green-500 hover:bg-green-700 text-white p-2 rounded-full"
+            >
+              <Plus size={20} />
+            </button>
+          </div>
+              <button onClick={handleBidNow} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg hover:scale-1">
                 Bid Now
               </button>
             </div>

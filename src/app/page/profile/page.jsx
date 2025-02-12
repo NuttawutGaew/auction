@@ -15,10 +15,12 @@ const user = {
     { id: 2, item: 'เก้าอี้โครงไม้สนประสาน', bid: '900' },
     { id: 3, item: 'โซฟาแอล 3 ที่นั่ง ปรับเบดได้', bid: '7,200' },
     { id: 4, item: 'โซฟา 3 ที่นั่งเบาะหนังPU สีเทา', bid: '4,500' },
-    { id: 5, item: 'ชุดโต๊ะทานอาหาร 3 ที่นั่ง', bid: '4,600' },
-    { id: 6, item: 'โต๊ะเครื่องแป้ง 6 ลิ้นชัก', bid: '2,500' },
-    { id: 7, item: 'ตู้เสื้อผ้า 3 บาน', bid: '2,700' },
-    { id: 8, item: 'โคมไฟติดพนัง โป๊ะทรงกระบอก', bid: '2,600' },
+  ],
+  purchaseHistory: [
+    { id: 1, item: 'ชุดโต๊ะทานอาหาร 3 ที่นั่ง', bid: '4,600' },
+    { id: 2, item: 'โต๊ะเครื่องแป้ง 6 ลิ้นชัก', bid: '2,500' },
+    { id: 3, item: 'ตู้เสื้อผ้า 3 บาน', bid: '2,700' },
+    { id: 4, item: 'โคมไฟติดพนัง โป๊ะทรงกระบอก', bid: '2,600' },
   ]
 };
 
@@ -49,6 +51,17 @@ function ProfilePage() {
             <h3 className="text-2xl font-bold mb-4">Auction History</h3>
             <ul className="space-y-4">
               {userData.auctionHistory.map((auction) => (
+                <li key={auction.id} className="flex justify-between bg-white p-4 rounded-lg hover:scale-105">
+                  <span>{auction.item}</span>
+                  <span>{auction.bid} บาท</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="mt-8 w-full">
+            <h3 className="text-2xl font-bold mb-4">Purchase History</h3>
+            <ul className="space-y-4">
+              {userData.purchaseHistory.map((auction) => (
                 <li key={auction.id} className="flex justify-between bg-white p-4 rounded-lg hover:scale-105">
                   <span>{auction.item}</span>
                   <span>{auction.bid} บาท</span>

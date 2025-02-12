@@ -2,65 +2,65 @@
 import React, { useState,useEffect } from 'react';
 import Navbar from '../../components/Navbar';
 import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 function LoginPage() {
+  const router = useRouter(); // เพิ่ม router จาก Next.js
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  useEffect(() => {
-    // ตัวอย่าง: ตรวจสอบ token หรือ session เพื่ออัปเดต isLoggedIn
-    const userLoggedIn = Boolean(localStorage.getItem('userToken')); // หรือ logic ที่ใช้จริง
-    setIsLoggedIn(userLoggedIn);
-  }, []);
+  const [isLoading, setIsLoading] = useState(false);
+
+   useEffect(() => {
+    // ตรวจสอบสถานะการล็อกอิน
+    const checkLoginStatus = () => {
+      const token = localStorage.getItem('userToken');
+      if (token) {
+        setIsLoggedIn(true);
+        router.push('/page/homepage');
+      }
+    };
+    
+    checkLoginStatus();
+  }, [router]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setIsLoading(true);
+
     try {
       const res = await fetch('http://localhost:3000/api/auth/login', {
         method: 'POST',
+        // credentials: 'include', // เปิดใช้งาน credentials
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, password }),
       });
-      if (res.status === 200) {
+
+      const data = await res.json();
+
+      if (res.ok) {
+        // จัดการ token และข้อมูล user
+        localStorage.setItem('userToken', data.token); // ถ้ามี token จาก response
         setIsLoggedIn(true);
-        window.location.href = '/page/homepage'; // ใช้ window.location.href เพื่อเปลี่ยนเส้นทาง
+        router.push('/page/homepage'); // ใช้ router.push แทน window.location
       } else {
-        const errorData = await res.json();
-        throw new Error(errorData.msg || 'Login failed');
+        throw new Error(data.message || 'เกิดข้อผิดพลาดในการเข้าสู่ระบบ');
       }
     } catch (error) {
       setError(error.message);
+    } finally {
+      setIsLoading(false);
     }
   };
-  const handleSignOut = async () => {
-    try {
-      const response = await fetch('/api/auth/logout', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Authorization': `Bearer ${token}`, // ตรวจสอบให้แน่ใจว่ามีการส่ง token ที่ถูกต้อง
-          'Content-Type': 'application/json'
-        }
-      });
 
-      if (response.status === 200) {
-        // ทำการ sign out สำเร็จ
-        console.log('Signed out successfully');
-        localStorage.removeItem('userToken'); // ลบ token ออกจาก localStorage
-        setIsLoggedIn(false);
-        router.push('/'); // เปลี่ยนเส้นทางไปยังหน้า login
-      } else {
-        const errorData = await response.json();
-        console.error('Error signing out:', errorData.msg || response.statusText);
-      }
-    } catch (error) {
-      console.error('Error signing out:', error);
-    }
+  // เพิ่มฟังก์ชันตรวจสอบ form
+  const isFormValid = () => {
+    return email.trim() !== '' && password.trim() !== '';
   };
 
   return (
@@ -122,6 +122,7 @@ function LoginPage() {
             <button
               href="/page/homepage"
               type="submit"
+              disabled={!isFormValid() || isLoading}
               className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             >
               Login
