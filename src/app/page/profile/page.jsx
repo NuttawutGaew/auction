@@ -9,12 +9,10 @@ import Link from 'next/link';
 const user = {
   name: 'My Test',
   email: 'test01@gmail.com',
-  profilePicture: '../images/profile.jpg',
+  profilePicture: '../images/pf333.jpg',
   auctionHistory: [
     { id: 1, item: 'เก้าอี้สไตล์หลุยส์', bid: '7,000' },
     { id: 2, item: 'เก้าอี้โครงไม้สนประสาน', bid: '900' },
-    { id: 3, item: 'โซฟาแอล 3 ที่นั่ง ปรับเบดได้', bid: '7,200' },
-    { id: 4, item: 'โซฟา 3 ที่นั่งเบาะหนังPU สีเทา', bid: '4,500' },
   ],
   purchaseHistory: [
     { id: 1, item: 'ชุดโต๊ะทานอาหาร 3 ที่นั่ง', bid: '4,600' },

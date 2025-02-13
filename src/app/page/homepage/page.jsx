@@ -32,7 +32,7 @@ function HomePage() {
         <div className="pt-2 w-full bg-[#787878] p-4 mx-0">
             <Slideimage />
           </div>
-          <div id="auction" className="w-full bg-white mx-0">
+          <div id="auction" className="pt-2 w-full h-auto bg-white mx-0 p-4">
             <Productpage />
           </div>
           <div id="product_v1" className="pt-2 w-full h-auto bg-[#787878] mx-0 p-4">
