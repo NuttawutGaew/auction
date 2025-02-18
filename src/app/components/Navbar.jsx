@@ -11,6 +11,45 @@ const Navbar = () => {
   const [user, setUser] = useState(null);
   const dropdownRef = useRef(null);
   const router = useRouter();
+  const [token, setToken] = useState(null); // เพิ่ม state สำหรับ token
+
+  useEffect(() => {
+    // Fetch user and token from local storage or API
+    const storedUser = JSON.parse(localStorage.getItem('user'));
+    const storedToken = localStorage.getItem('token');
+    setUser(storedUser);
+    setToken(storedToken);
+  }, []);
+
+
+  const handleSignOut = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/api/auth/signout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`, // Include the token in the headers
+        },
+        body: JSON.stringify({
+          email: user.email, // Include the email in the request body
+          password: user.password, // Include the password in the request body
+        }),
+      });
+  
+      if (response.status === 200) {
+        // ทำการ sign out สำเร็จ
+        console.log('Signed out successfully');
+        setUser(null);
+        router.push('/page/login'); // เปลี่ยนเส้นทางไปยังหน้า login
+      } else {
+        console.error('Error signing out:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
+
+
 
   useEffect(() => {
     setMounted(true);
@@ -44,17 +83,7 @@ const Navbar = () => {
     };
   }, []);
 
-  const handleSignOut = async () => {
-    try {
-      const response = await axios.post('/api/auth/signout');
-      if (response.status === 200) {
-        setUser(null);
-        router.push('/');
-      }
-    } catch (error) {
-      console.error('Error signing out:', error);
-    }
-  };
+
 
   return (
     <nav className="bg-white p-2 w-full fixed top-0 left-0 right-0 rounded-bl-lg rounded-br-lg shadow-lg z-10  bg-opacity-50 backdrop-blur-xl">

@@ -9,7 +9,7 @@ function ContactPage() {
         <Image src={img_map} alt="Map" className="w-full h-auto " />
       </div>
       
-      <div className="flex flex-col bg-{[#333333]} w-full">
+      <div className="flex flex-col flex-end bg-{[#333333]} w-full">
             <h1 className="text-4xl text-center mt-2 text-white">ติดต่อเรา</h1>
         <div>
             <div className="flex items-center text-2xl text-start text-white p-2">

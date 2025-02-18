@@ -130,6 +130,7 @@ const PaymentPage = () => {
                     placeholder="Your Name"
                   />
                 </div>
+                <div className='mt-4 ml-4 pt-4 border-t-2 border-gray-300'></div>
                 <div className="text-center font-bold">Amount: ${totalAmount.toLocaleString()}</div>
               </>
             )}
@@ -150,6 +151,13 @@ const PaymentPage = () => {
                 <div className="text-center font-bold">Amount: {totalAmount.toLocaleString()} บาท</div>
               </>
             )} */}
+
+
+              <div className='mt-4 ml-4 pt-4 border-t-2 border-gray-300'></div>
+              <div>
+                <h2 className='flex items-center justify-center mb-2 text-xl font-bold'>Attach money transfer slip</h2>
+                <input type="file" className="w-full p-2 border border-gray-300 rounded text-sm" />
+              </div>
 
             <button type="submit" className="w-full bg-green-500 text-white p-2 rounded font-semibold hover:bg-green-600 hover:scale-105">
               Submit Payment

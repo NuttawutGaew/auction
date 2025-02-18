@@ -1,19 +1,8 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
-
-// const products = [
-//   { id: 1, name: 'เก้าอี้สไตล์หลุยส์', images: ['/images/imgg.jpg','/images/p11.jpg','/images/p111.jpg','/images/p1111.jpg'], price: "7,000", description: 'เก้าอี้ สไตล์หลุยส์ เบาะหุ้มหนังแท้สีน้ำตาล ดึงดุมยึดหมุดทองเหลือง โครงไม้โอ๊ค(มี 2 ตัว)', description2: 'ขนาดกว้าง 53 ลึก 50 สูงนั่ง 36 สูงหลัง 79 เซนติเมตร', currentBid: "12,000" },
-//   { id: 2, name: 'เก้าอี้โครงไม้สนประสาน', images: ['/images/p22222.jpg','/images/p22.jpg','/images/p222.jpg','/images/p2222.jpg'], price: "900", description: 'เก้าอี้โครงไม้สนประสาน เบาะหนัง PU สีขาว 2 ตัว', description2: 'รายละเอียดเพิ่มเติมสำหรับเก้าอี้โครงไม้สนประสาน', currentBid: "900" },
-//   { id: 3, name: 'โซฟาแอล 3 ที่นั่ง ปรับเบดได้', images: ['/images/imgg33.jpg','/images/imgg333.jpg','/images/imgg3333.jpg','/images/imgg333333.jpg'], price: "7,200", description: 'โซฟาแอล 3 ที่นั่ง สามารถปรับเป็นเบดได้ เบาะหนังกลับ PU สีน้ำตาล มีลิ้นชักดึงเป็นเบดได้พิงหลังปรับเอนได้ 3 ระดับ โครงขาโซฟาไม้ โครงลิ้นชักเหล็ก', description2: 'รายละเอียดเพิ่มเติมสำหรับโซฟาแอล 3 ที่นั่ง', currentBid: "12,600" },
-//   { id: 4, name: 'โซฟา 3 ที่นั่งเบาะหนังPU สีเทา', images: ['/images/imgg44.jpg','/images/imgg444.jpg','/images/imgg4444.jpg'], price: "4,500", description: 'โซฟา 3 ที่นั่ง เบาะหนัง PU สีเทา โครงไม้ ขาพลาสติกสีดำ', description2: 'รายละเอียดเพิ่มเติมสำหรับโซฟา 3 ที่นั่ง', currentBid: "9,800" },
-//   { id: 5, name: 'ชุดโต๊ะทานอาหาร 3 ที่นั่ง', images: ['/images/imgg55555.jpg','/images/imgg555.jpg','/images/imgg5555.jpg','/images/imgg55.jpg'], price: "4,600", description: 'ชุดโต๊ะทานอาหาร 3 ที่นั่ง ท็อปกระจกเทมเปอร์สีดำ เก้าอี้มีพนักพิง เบาะผ้าสีเทาโครงขาเหล็กสีดำ', description2: 'โต๊ะ ขนาดกว้าง 80 ลึก 80 สูง 73 เซนติเมตร เก้าอี้ ขนาดกว้าง 43 ลึก 43 สูงนั่ง 45 สูงหลัง 92 เซนติเมตร', currentBid: "2,200" },
-//   { id: 6, name: 'โต๊ะเครื่องแป้ง 6 ลิ้นชัก', images: ['/images/p6.jpg','/images/imgg66.jpg','/images/imgg666.jpg','/images/imgg6666.jpg','/images/imgg66666.jpg'], price: "2,500", description: 'โต๊ะเครื่องแป้ง 6 ลิ้นชัก ท็อปปิดผิวลายหินอ่อน โครงไม้ MDF สีบีช', description2: 'รายละเอียดเพิ่มเติมสำหรับโต๊ะเครื่องแป้ง 6 ลิ้นชัก', currentBid: "4,500" },
-//   { id: 7, name: 'ตู้เสื้อผ้า 3 บาน', images: ['/images/p7.jpg','/images/imgg77.jpg','/images/imgg777.jpg','/images/imgg7777.jpg','/images/imgg777777.jpg'], price: "2,700", description: 'ตู้เสื้อผ้า 2 บานเปิดทึบ 1 บานเปิดกระจก โครงอลูมิเนียมิ 2 ลิ้นชักหน้าบานติดกระจกเงาสีชา โครงฐานไม้ MDF ปิดผิวสีเทา', description2: 'รายละเอียดเพิ่มเติมสำหรับตู้เสื้อผ้า 3 บาน', currentBid: "3,700" },
-//   { id: 8, name: 'โคมไฟติดพนัง โป๊ะทรงกระบอก', images: ['/images/p8.jpg','/images/imgg88.jpg','/images/imgg888.jpg','/images/imgg8888.jpg','/images/imgg88888.jpg','/images/imgg888888.jpg'], price: "2,600", description: 'โคมไฟติดผนัง โป๊ะทรงกระบอกแก้วขุ่นสีขาว โครงทองเหลือง', description2: 'รายละเอียดเพิ่มเติมสำหรับโคมไฟติดพนัง', currentBid: "2,400" },
-// ];
+import NavbarBids from '../../components/NavbarBids';
 
 const ProductPage = () => {
   const [timeLeft, setTimeLeft] = useState(180);
@@ -21,24 +10,17 @@ const ProductPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const [auctions, setAuctions] = useState([]);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft(prevTime => (prevTime > 0 ? prevTime - 1 : 0));
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, []);
-
-  useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchAuctions = async () => {
       try {
         const response = await fetch("http://localhost:3000/api/auctions", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
           },
-          credentials: "include",
+          // credentials: "include",
         });
 
         if (!response.ok) {
@@ -46,67 +28,72 @@ const ProductPage = () => {
         }
 
         const data = await response.json();
-
-        // ✅ กรองเฉพาะรายการที่ยังเปิดอยู่ (status: "active")
-        const activeProducts = data.data.filter(product => product.status === "active");
-
-        setProducts(activeProducts);
-      } catch (err) {
-        setError(err.message);
+        setAuctions(data);
+      } catch (error) {
+        console.error('Error fetching auctions', error);
+        setError('Error fetching auctions');
       } finally {
         setLoading(false);
       }
     };
 
+    fetchAuctions();
+  }, []);
 
-    fetchProducts()
-  }, [])
+  if (loading) {
+    return (
+      <div className='flex flex-col justify-center items-center h-screen text-4xl text-center font-bold'>
+        <div className='p-4'>Loading...</div>
+        <img alt="Loading" src='https://i.pinimg.com/originals/f2/9f/02/f29f025c9ff5297e8083c52b01f1a709.gif' />
+      </div>
+    );
+  }
 
-  const formatTime = (seconds) => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
-  };
+  if (error) {
+    return (
+      <div className='flex flex-col justify-center items-center h-screen text-4xl text-center font-bold'>
+        <div className='p-4'>Error: {error}</div>
+      </div>
+    );
+  }
 
   return (
-    <div className="p-2 max-w-7xl mx-auto bg-white"> 
-    <h1 className="text-2xl font-bold mb-4 text-center font-extrabold text-4xl">สินค้าประมูล</h1>
-
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-      {products.map((product) => (
-        <div key={product._id} className="border rounded-lg p-4 bg-white">
-            <Link href={{
-              pathname: '/page/bid',
-              query: { 
-                id: product._id,
-                name: product.productName,
-                images: product.images,
-                // price: product.price,
-                description: product.productDescription,
-                // description2: product.description2,
-                currentBid: product.currentBid
-              }
-            }} legacyBehavior>
-              <a>
-                <img src={product.images} alt={product.productName} className="w-full h-auto mb-4 rounded-lg cursor-pointer" />
-              </a>
-            </Link>
-          <div className="mb-2 text-center">
-            <h3 className="text-lg font-semibold">{product.productName}</h3>
-          </div>
-          <div className="flex justify-between">
-            <h3 className="text-lg font-semibold">{product.currentBid} บาท</h3>
-            <h3 className="text-lg font-semibold text-red-500">{formatTime(timeLeft)}</h3>
-          </div>
+    <div>
+      <div className="max-w-full mx-auto bg-white  p-8">
+        <h1 className="font-bold mb-4 text-center font-extrabold text-4xl p-2 shadow-xl">Auction Product List</h1>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 p-4">
+          {auctions.map((auction) => (
+            <div key={auction._id} className="border rounded-lg p-4 bg-white shadow-xl">
+              <Link href={{
+                pathname: `/page/bid`,
+                query: { 
+                  id: auction._id,
+                  name: auction.productName,
+                  images: auction.productImages,
+                  description: auction.productDescription,
+                  size: auction.productSize,
+                  startingBid: auction.startingBid,
+                  bids: auction.bids,
+                  currentBid: auction.currentBid,
+                  minimumIncrement: auction.minimumIncrement,
+                  endsIn: auction.endsIn,
+                }
+              }} legacyBehavior>
+                <a>
+                  <img src={auction.productImages} alt={auction.productName} className="w-full h-64 object-cover mb-4 rounded-lg cursor-pointer" />
+                </a>
+              </Link>
+              <h2 className="font-bold text-xl mb-2">{auction.productName}</h2>
+              {/* <p className="text-gray-700 mb-2">{auction.productDescription}</p> */}
+              {/* <p className="text-gray-700 mb-2">Size: {auction.productSize}</p> */}
+              {/* <p className="text-gray-700 mb-2">Starting Bid: {auction.startingBid} บาท</p> */}
+              <p className="text-gray-700 mb-2">Current Bid: {auction.currentBid} บาท</p>
+            </div>
+          ))}
         </div>
-      ))}
+      </div>
     </div>
-  </div>
   );
-}
-// const getCookie = (name) => {
-//   const cookies = document.cookie.split("; ");
-//   const cookie = cookies.find(row => row.startsWith(name + "="));
-//   return cookie ? decodeURIComponent(cookie.split("=")[1]) : null;
-// };
+};
+
 export default ProductPage;
