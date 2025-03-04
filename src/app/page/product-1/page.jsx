@@ -17,8 +17,7 @@ const products = [
   function ProducttPage() {
     return (
       <div className="pt-8 p-4 max-w-full mx-auto bg-[#787878]"> 
-        <h1 className="font-bold mb-4 text-center font-extrabold text-4xl text-white">Product list</h1>
-  
+        <h1 className="font-bold mb-4 text-center font-extrabold text-4xl p-2 shadow-xl bg-gradient-to-tr from-red-400 to-yellow-300">Product list</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 p-4">
           {products.map((product) => (
             <div key={product.id} className="border rounded-lg p-4 bg-white">

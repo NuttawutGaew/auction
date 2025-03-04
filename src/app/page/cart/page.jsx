@@ -37,9 +37,9 @@ const CartPage = () => {
   const [address, setAddress] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [cartItems, setCartItems] = useState([
-    { id: 1, name: 'เก้าอี้สไตล์หลุยส์', price: 7000, quantity: 1, image: '/images/imgg.jpg', isAuction: true },
-    { id: 2, name: 'เก้าอี้โครงไม้สนประสาน', price: 900, quantity: 2, image: '/images/p22222.jpg', isAuction: false },
-    { id: 3, name: 'เก้าอี้โครงไม้สนประสาน', price: 7200, quantity: 1, image: '/images/imgg33333.jpg', isAuction: false },
+    { id: 1, name: 'LAZBOY_10T-554 Dreamtime (Half Leather)', price: 7000, quantity: 1, image: '/images/imgg.jpg', isAuction: true },
+    { id: 2, name: 'P33-554 Dreamtime', price: 900, quantity: 2, image: '/images/p22222.jpg', isAuction: false },
+    { id: 3, name: 'T39-554 Dreamtime', price: 7200, quantity: 1, image: '/images/imgg33333.jpg', isAuction: false },
   ]);
   const [showModal, setShowModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
@@ -140,11 +140,11 @@ const CartPage = () => {
         <h2 className="text-xl font-semibold mb-4">Auction Items</h2>
         <p className="text-red-500">กรุณาชำระเงินภายในเวลา: {formatTime(timeLeft)}</p>
         {auctionItems.map(item => (
-          <div key={item.id} className="flex items-center mb-4">
+          <div key={item.id} className="flex items-center mb-4 ">
             <img src={item.image} alt={item.name} className="w-16 h-16 mr-4" />
             <div className="flex-1">
               <div>
-                <h2 className="font-semibold">{item.name}</h2>
+                <h2 className="font-semibold text-xl">{item.name}</h2>
                 <p>Auction Price: {item.price.toLocaleString()}บาท</p>
               </div>
               <div className="flex items-center">
@@ -163,7 +163,7 @@ const CartPage = () => {
             <img src={item.image} alt={item.name} className="w-16 h-16 mr-4" />
             <div className="flex-1 flex justify-between">
               <div>
-                <h2 className="font-semibold">{item.name}</h2>
+                <h2 className="font-semibold text-xl">{item.name}</h2>
                 <p>Price: {item.price.toLocaleString()}บาท</p>
               </div>
               <div className="flex items-center">

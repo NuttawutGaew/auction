@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react'
 import NavbarCustomer from '../../components/NavbarCustomer';
 import Image from 'next/image'
@@ -9,6 +11,7 @@ import ProducttPage from '../product-1/page'
 import ContactPage from '../contact/page'
 import ScrollToTop from '../../components/ScolltoTop'
 import ButtonMainCustomer from '../../components/ButtonMainCustomer'
+import CreateAuction from '../../components/CreateAuction';
 
 function HomePage() {
   return (
@@ -40,6 +43,9 @@ function HomePage() {
           </div>
           <div id="contactt" className="w-full h-auto bg-[#333333]  ">
             <ContactPage />
+          </div>
+          <div>
+            <CreateAuction />
           </div>
           <div>
             <ScrollToTop />
