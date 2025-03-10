@@ -5,19 +5,98 @@ import 'tailwindcss/tailwind.css';
 import NavbarProfile from '../../components/NavbarProfile';
 import Button from '@mui/material/Button';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { io } from 'socket.io-client';
+
+const API_URL = "http://localhost:3111/api/v1";
+const socket = io("http://localhost:3111");
 
 function ProfilePage() {
   const [profile, setProfile] = useState({
-    wonAuctions: 5, // mock up value for Winning bid
-    participatedAuctions: 10, // mock up value for Participating auctions
-    listedItems: 3 // mock up value for My auction
+    wonAuctions: 0,
+    participatedAuctions: 0,
+    listedItems: 0
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [profileImage, setProfileImage] = useState(null);
   const [refresh, setRefresh] = useState(false);
-  const [selectedStat, setSelectedStat] = useState('wonAuctions'); // เพิ่ม state สำหรับหัวข้อที่เลือก
-  const [showDetails, setShowDetails] = useState(false); // เพิ่ม state สำหรับการแสดงรายละเอียด
+  const [selectedStat, setSelectedStat] = useState('wonAuctions');
+  const [auctionHistory, setAuctionHistory] = useState([]);
+  const [bidHistory, setBidHistory] = useState([]);
+  const [myAuctions, setMyAuctions] = useState([]);
+  const [myBids, setMyBids] = useState([]);
+  const [myCreatedAuctions, setMyCreatedAuctions] = useState([]);
+  const router = useRouter();
+  const [myWinningBids, setMyWinningBids] = useState([]);
+
+  useEffect(() => {
+    fetchMyBids();
+    fetchMyCreatedAuctions();
+    fetchWinningBids();
+    
+    socket.on("bid_update", (data) => {
+      setMyBids(prev => prev.map(bid => 
+        bid.auction?._id === data.auctionId 
+          ? { ...bid, auction: { ...bid.auction, currentPrice: data.highestBid } }
+          : bid
+      ));
+    });
+
+    return () => {
+      socket.off("bid_update");
+    };
+  }, []);
+
+  const fetchMyBids = async () => {
+    try {
+      const response = await fetch(`${API_URL}/auction/my-bids`, { credentials: 'include' });
+      const data = await response.json();
+      if (data.status === 'success') {
+        setMyBids(data.data || []);
+      }
+    } catch (error) {
+      setError('ไม่สามารถโหลดข้อมูลการบิดของคุณได้');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchMyCreatedAuctions = async () => {
+    try {
+      const response = await fetch(`${API_URL}/auction/my-auctions`, { credentials: 'include' });
+      const data = await response.json();
+      if (data.status === 'success') {
+        setMyCreatedAuctions(data.data || []);
+      }
+    } catch (error) {
+      setError('ไม่สามารถโหลดข้อมูลการประมูลของคุณได้');
+    }
+  };
+
+  const fetchWinningBids = async () => {
+    try {
+      const response = await fetch(`${API_URL}/auction/my-winning-bids`, { credentials: 'include' });
+  
+      // Check if the response is in JSON format
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error("Invalid response format");
+      }
+  
+      const result = await response.json();
+  
+      if (result.status === 'success') {
+        setMyWinningBids(result.data);
+      } else {
+        setError(result.message);
+      }
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -52,8 +131,41 @@ function ProfilePage() {
       }
     };
 
+    const fetchAuctionHistory = async () => {
+      try {
+        const res = await fetch('http://localhost:3111/api/v1/auction', {
+          credentials: 'include'
+        });
+
+        if (!res.ok) throw new Error('Unable to retrieve auction history.');
+
+        const data = await res.json();
+        setMyAuctions(data.data);
+      } catch (err) {
+        setError(err.message);
+      }
+    };
+
+    const fetchBidHistory = async () => {
+      try {
+        const res = await fetch('http://localhost:3111/api/v1/auction', {
+          credentials: 'include'
+        });
+
+        if (!res.ok) throw new Error('Unable to retrieve bid history.');
+
+        const data = await res.json();
+        setBidHistory(data.data);
+      } catch (err) {
+        setError(err.message);
+      }
+    };
+
     fetchProfile();
     fetchProfileImage();
+    fetchAuctionHistory();
+    fetchBidHistory();
+    fetchWinningBids();
   }, [refresh]);
 
   if (loading) return <div className="text-center py-8">Loading...</div>;
@@ -63,109 +175,63 @@ function ProfilePage() {
     switch (selectedStat) {
       case 'wonAuctions':
         return (
-          <div className="bg-gray-50 p-4 rounded-lg">
+          <div className="bg-blue-100 border-2 border-blue-500 p-4 rounded-lg">
             <div className="flex items-center space-x-3">
-              {/* <p className="text-xl font-bold text-blue-600">{profile?.wonAuctions || 0}</p> */}
               <h3 className="font-semibold text-xl">Details about the winning bids...</h3>
-            {/* <p className="text-gray-600 mt-2">Details about the winning bids...</p> */}
             </div>
             <ul className="list-disc list-inside mt-2">
-              <li className='mt-2'>
-                Auction 1: $100
-                <Link href="/page/wonAuctionsDetails/1">
-                  <button className="ml-4 bg-blue-500 text-white px-2 py-1 rounded-lg hover:bg-blue-600 transition-all">
-                    👁️
-                  </button>
-                </Link>
-              </li>
-              <li className='mt-2'>
-                Auction 2: $150
-                <Link href="/page/wonAuctionsDetails/2">
-                  <button className="ml-4 bg-blue-500 text-white px-2 py-1 rounded-lg hover:bg-blue-600 transition-all">
-                    👁️
-                  </button>
-                </Link>
-              </li>
-              <li className='mt-2'>
-                Auction 3: $200
-                <Link href="/page/wonAuctionsDetails/3">
-                  <button className="ml-4 bg-blue-500 text-white px-2 py-1 rounded-lg hover:bg-blue-600 transition-all">
-                    👁️
-                  </button>
-                </Link>
-              </li>
+              {myWinningBids.map((bid) => (
+                <li key={bid._id} className='mt-2'>
+                  {bid.auction?.name}: ฿{bid.amount}
+                  <Link href={`/page/wonAuctionsDetails/${bid.auction?._id}`}>
+                    <button className="ml-4 bg-blue-500 text-white px-2 py-1 rounded-lg hover:bg-blue-600 transition-all">
+                      👁️
+                    </button>
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
         );
       case 'participatedAuctions':
         return (
-          <div className="bg-gray-50 p-4 rounded-lg">
+          <div className="bg-green-100 border-2 border-green-500 p-4 rounded-lg">
             <div className="flex items-center space-x-3">
-              {/* <p className="text-xl font-bold text-green-600">{profile?.participatedAuctions || 0}</p> */}
               <h3 className="font-semibold text-xl">Details about the participated auctions...</h3>
-            {/* <p className="text-gray-600 mt-2">Details about the participated auctions...</p> */}
             </div>
             <ul className="list-disc list-inside mt-2">
-              <li className='mt-2'>
-                Auction 1: $3450
-                <Link href="/page/participatedAuctionsDetails/1">
-                  <button className="ml-4 bg-green-500 text-white px-2 py-1 rounded-lg hover:bg-green-600 transition-all">
+              {myBids.map((bid) => (
+                <li key={bid._id} className='mt-2'>
+                  {bid.auction?.name}: ฿{bid.amount}
+                  <button
+                    onClick={() => router.push(`${API_URL}/auction/${bid.auction._id}`)}
+                    className="ml-4 bg-blue-500 text-white px-2 py-1 rounded-lg hover:bg-blue-600 transition-all"
+                  >
                     👁️
                   </button>
-                </Link>
-              </li>
-              <li className='mt-2'>
-                Auction 2: $6275
-                <Link href="/page/participatedAuctionsDetails/2">
-                  <button className="ml-4 bg-green-500 text-white px-2 py-1 rounded-lg hover:bg-green-600 transition-all">
-                    👁️
-                  </button>
-                </Link>
-              </li>
-              <li className='mt-2'>
-                Auction 3: $9120
-                <Link href="/page/participatedAuctionsDetails/3">
-                  <button className="ml-4 bg-green-500 text-white px-2 py-1 rounded-lg hover:bg-green-600 transition-all">
-                    👁️
-                  </button>
-                </Link>
-              </li>
+                </li>
+              ))}
             </ul>
           </div>
         );
       case 'listedItems':
         return (
-          <div className="bg-gray-50 p-4 rounded-lg">
+          <div className="bg-purple-100 border-2 border-purple-500 p-4 rounded-lg">
             <div className="flex items-center space-x-3">
-              {/* <p className="text-xl font-bold text-purple-600">{profile?.listedItems || 0}</p> */}
               <h3 className="font-semibold text-xl">Details about the listed items...</h3>
-            {/* <p className="text-gray-600 mt-2">Details about the listed items...</p> */}
             </div>
             <ul className="list-disc list-inside mt-2">
-              <li className='mt-2'>
-                Item 1: Starting bid $30
-                <Link href="/page/listedItemsDetails/1">
-                  <button className="ml-4 bg-purple-500 text-white px-2 py-1 rounded-lg hover:bg-purple-600 transition-all">
+              {myCreatedAuctions.map((auction) => (
+                <li key={auction._id} className='mt-2'>
+                  {auction.name}: ฿{auction.startingPrice}
+                  <button
+                    onClick={() => router.push(`${API_URL}/auction/${auction._id}`)}
+                    className="ml-4 bg-blue-500 text-white px-2 py-1 rounded-lg hover:bg-blue-600 transition-all"
+                  >
                     👁️
                   </button>
-                </Link>
-              </li>
-              <li className='mt-2'>
-                Item 2: Starting bid $45
-                <Link href="/page/listedItemsDetails/2">
-                  <button className="ml-4 bg-purple-500 text-white px-2 py-1 rounded-lg hover:bg-purple-600 transition-all">
-                    👁️
-                  </button>
-                </Link>
-              </li>
-              <li className='mt-2'>
-                Item 3: Starting bid $60
-                <Link href="/page/listedItemsDetails/3">
-                  <button className="ml-4 bg-purple-500 text-white px-2 py-1 rounded-lg hover:bg-purple-600 transition-all">
-                    👁️
-                  </button>
-                </Link>
-              </li>
+                </li>
+              ))}
             </ul>
           </div>
         );
@@ -195,10 +261,6 @@ function ProfilePage() {
               </div>
               <p className="text-gray-500">Email : {profile?.email || 'Not specified'}</p>
               <p className="text-gray-500">Phone : {profile?.phone || 'Not specified'}</p>
-
-              {/* <p className="text-sm text-gray-400 mt-2">
-                สมาชิกตั้งแต่: {profile?.profile?.createdAt ? new Date(profile.profile.createdAt).toLocaleDateString('th-TH') : 'ไม่ระบุ'}
-              </p> */}
               <div className='mt-2 '>
                 <Link href="/page/editprofile">
                   <button className="bg-gradient-to-tr from-yellow-500 to-red-500 text-white px-3 py-2 text-sm rounded-lg hover:bg-red-600 transition-all">
@@ -219,28 +281,28 @@ function ProfilePage() {
             </div>
           </div>
 
-           {/* Profile Stats */}
+          {/* Profile Stats */}
           <div className="grid grid-cols-3 gap-4 mt-6">
             <button
               className={`p-4 rounded-lg ${selectedStat === 'wonAuctions' ? 'bg-blue-100 border-2 border-blue-500' : 'bg-gray-50'}`}
               onClick={() => setSelectedStat('wonAuctions')}
             >
-              <p className="text-xl font-bold text-blue-600">{profile?.wonAuctions || 0}</p>
+              {/* <p className="text-xl font-bold text-blue-600">{profile?.wonAuctions || 0}</p> */}
               Winning bid
             </button>
             <button
               className={`p-4 rounded-lg ${selectedStat === 'participatedAuctions' ? 'bg-green-100 border-2 border-green-500' : 'bg-gray-50'}`}
               onClick={() => setSelectedStat('participatedAuctions')}
             >
-              <p className="text-xl font-bold text-green-600">{profile?.participatedAuctions || 0}</p>
-              Participating auctions
+              {/* <p className="text-xl font-bold text-green-600">{profile?.participatedAuctions || 0}</p> */}
+              Auction history
             </button>
             <button
               className={`p-4 rounded-lg ${selectedStat === 'listedItems' ? 'bg-purple-100 border-2 border-purple-500' : 'bg-gray-50'}`}
               onClick={() => setSelectedStat('listedItems')}
             >
-              <p className="text-xl font-bold text-purple-600">{profile?.listedItems || 0}</p>
-              My auction
+              {/* <p className="text-xl font-bold text-purple-600">{profile?.listedItems || 0}</p> */}
+              Create auction
             </button>
           </div>
 

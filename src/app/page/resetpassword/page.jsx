@@ -1,44 +1,60 @@
-'use client';
-import React, { useState } from 'react';
-import Navbar from '../../components/Navbar';
-import { useRouter } from 'next/navigation';
-import { useSearchParams } from 'next/navigation';
+"use client";
 
-const ResetPasswordPage = () => {
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [message, setMessage] = useState('');
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const token = searchParams.get('token');
+import { useState, useEffect } from "react";
+import { useSearchParams, useRouter } from "next/navigation"; // ✅ ใช้ next/navigation
+import axios from "axios";
+import zxcvbn from "zxcvbn"; // ✅ เพิ่ม import ที่หายไป
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
 
-    if (password !== confirmPassword) {
-      setMessage('Passwords do not match.');
+export default function ResetPassword() {
+  const searchParams = useSearchParams(); // ✅ แก้ไข ไม่ใช้ destructuring
+  const token = searchParams.get("token"); // ✅ ใช้ searchParams ตรงๆ
+  const router = useRouter(); // ✅ ใช้ useRouter() แทน useNavigate()
+
+  useEffect(() => {
+    console.log("Token received:", token);
+
+    if (!token || token === "undefined" || token === "null") {
+      console.error("Invalid token detected. Redirecting...");
+      router.push("/forgot-password"); // ✅ ใช้ router.push() แทน navigate()
+    }
+  }, [token, router]);
+
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [passwordStrength, setPasswordStrength] = useState(0);
+
+  const handlePasswordChange = (e) => {
+    const value = e.target.value;
+    setPassword(value);
+    setPasswordStrength(zxcvbn(value).score);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    if (!token || token === "undefined" || token === "null") {
+      toast.error("❌ ไม่พบ Token กรุณาลองใหม่");
       return;
     }
-
+  
     try {
-      const response = await fetch('http://localhost:3000/api/auth/reset-password', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ token, newPassword: password }),
+      const response = await axios.post("http://localhost:3111/api/v1/accounts/reset-password", {
+        token, // ✅ ส่ง Token ไปที่ API
+        newPassword: password,
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        setMessage(`Error: ${errorData.msg}`);
-        return;
-      }
-
-      setMessage('Password reset successful.');
-      router.push('/page/login');
-    } catch (error) {
-      setMessage(`Error: ${error.message}`);
+  
+      toast.success("Your password has been changed. Please log in again.");
+      setTimeout(() => {
+        router.push("/page/login");
+      }, 3000);
+    } catch (err) {
+      toast.error("❌ " + (err.response?.data?.message || "เกิดข้อผิดพลาด"));
     }
   };
 
@@ -47,7 +63,7 @@ const ResetPasswordPage = () => {
       className="flex flex-col items-center justify-center min-h-screen py-2 bg-cover bg-center"
       style={{ backgroundImage: "url('/images/sp.jpg')" }}
     >
-      <Navbar />
+      <ToastContainer />
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-sm bg-white p-6 rounded-xl shadow-md bg-opacity-70 backdrop-blur-lg"
@@ -96,5 +112,3 @@ const ResetPasswordPage = () => {
     </div>
   );
 };
-
-export default ResetPasswordPage;

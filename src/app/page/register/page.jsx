@@ -3,6 +3,8 @@ import React , {useState} from 'react';
 import Navbar from "../../components/Navbar";
 import Link from 'next/link';
 import { useSession } from 'next-auth/react'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 function RegisterPage() {
@@ -14,6 +16,7 @@ function RegisterPage() {
   const [error, setError] = useState('')
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [success, setSuccess] = useState('');
 
   const { data: session } = useSession();
   if (session) redirect("/page/homepage");
@@ -62,7 +65,7 @@ function RegisterPage() {
         return;
       }
 
-      alert("สมัครสมาชิกเรียบร้อย กรุณายืนยันอีเมลของคุณ.");
+      toast.success("You have successfully applied for membership. Please confirm your email.");
     } catch (err) {
       console.error("Registration Error:", err);
       setError("Unexpected error occurred. Please try again later.");
@@ -74,6 +77,7 @@ function RegisterPage() {
      style={{ backgroundImage: "url('/images/bgr.jpg')" }}
     >
       <Navbar />
+      <ToastContainer />
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md mt-8 bg-opacity-70 backdrop-blur-lg">
         <h2 className="text-2xl font-bold mb-6 text-center">Register</h2>
         <form onSubmit={handleSubmit}>
@@ -166,7 +170,7 @@ function RegisterPage() {
           <div className="flex items-center justify-between">
             <button
               type="submit"
-              className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              className="bg-gradient-to-tr from-red-500 to-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline "
             >
               Register
             </button>

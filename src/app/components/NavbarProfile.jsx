@@ -12,7 +12,7 @@ const NavbarBids = () => {
     router.push('/page/homepage');
   };
   return (
-    <nav className="bg-yellow-400 p-3 w-full fixed top-0 left-0 right-0 shadow-lg z-50">
+    <nav className="bg-gradient-to-tr from-red-400 to-purple-400 p-3 w-full fixed top-0 left-0 right-0 shadow-lg z-50">
       <div>
         <button onClick={handleBackToHome} className="flex items-center space-x-2">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">

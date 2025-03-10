@@ -12,6 +12,7 @@ import ContactPage from '../contact/page'
 import ScrollToTop from '../../components/ScolltoTop'
 import ButtonMainCustomer from '../../components/ButtonMainCustomer'
 import CreateAuction from '../../components/CreateAuction';
+import Category from '../../components/Category';
 
 function HomePage() {
   return (
@@ -43,6 +44,9 @@ function HomePage() {
           </div>
           <div id="contactt" className="w-full h-auto bg-[#333333]  ">
             <ContactPage />
+          </div>
+          <div>
+            <Category/>
           </div>
           <div>
             <CreateAuction />

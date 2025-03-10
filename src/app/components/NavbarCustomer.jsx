@@ -13,8 +13,47 @@ const NavbarCustomer = () => {
   const [token, setToken] = useState(null); // เพิ่ม state สำหรับ token
   const dropdownRef = useRef(null);
   const router = useRouter();
+  const [refresh, setRefresh] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [profile, setProfile] = useState(null);
+  const [profileImage, setProfileImage] = useState(null);
 
-  
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await fetch('http://localhost:3111/api/v1/profile', {
+          credentials: 'include'
+        });
+
+        if (!response.ok) throw new Error('ไม่สามารถดึงข้อมูลโปรไฟล์ได้');
+
+        const data = await response.json();
+        setProfile(data.data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const fetchProfileImage = async () => {
+      try {
+        const res = await fetch('http://localhost:3111/api/v1/profile/image', { 
+          credentials: 'include'
+        });
+
+        if (!res.ok) throw new Error("โหลดรูปภาพไม่สำเร็จ");
+
+        const data = await res.json();
+        setProfileImage(data.image); // ใช้ Base64 Image
+      } catch (err) {
+        console.error("ไม่สามารถโหลดรูปภาพโปรไฟล์ได้", err);
+      }
+    };
+
+    fetchProfile();
+    fetchProfileImage();
+  }, [refresh]); // ดึงข้อมูลใหม่เมื่อกดรีเฟรช
 
   useEffect(() => {
     // Fetch user and token from local storage or API
@@ -140,6 +179,62 @@ const NavbarCustomer = () => {
       document.addEventListener('mousedown', handleClickOutside)
       return () => document.removeEventListener('mousedown', handleClickOutside)
     }, [])
+    const [categories, setCategories] = useState([]);
+    const [categoriesOpen, setCategoriesOpen] = useState(false);
+    const categoriesRef = useRef(null);
+    
+    useEffect(() => {
+      const handleClickOutside = (event) => {
+        if (categoriesRef.current && !categoriesRef.current.contains(event.target)) {
+          setCategoriesOpen(false);
+        }
+      };
+    
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    useEffect(() => {
+      const fetchCategories = async () => {
+        try {
+          const response = await fetch('http://localhost:3111/api/v1/auction/categories', {
+            credentials: 'include'
+          });
+    
+          if (!response.ok) throw new Error('Failed to fetch categories');
+    
+          const data = await response.json();
+          setCategories(data.categories);
+        } catch (err) {
+          console.error('Error fetching categories:', err);
+        }
+      };
+    
+      fetchCategories();
+    }, []);
+
+    const handleCategoryClick = (categories) => {
+      setSearchText(categories);
+      setCategoriesOpen(false);
+      // Fetch items from the backend based on the selected category
+      fetchItemsByCategory(categories);
+    };
+    
+    const fetchItemsByCategory = async (categories) => {
+      try {
+        const response = await fetch(`http://localhost:3111/api/v1/auction/categories=${categories}`, {
+          credentials: 'include'
+        });
+    
+        if (!response.ok) throw new Error('Failed to fetch items');
+    
+        const data = await response.json();
+        // Update state with fetched items
+        setItems(data.items);
+      } catch (err) {
+        console.error('Error fetching items:', err);
+      }
+    };
 
   return (
     <nav className="bg-white p-2 w-full fixed top-0 left-0 right-0 rounded-bl-lg rounded-br-lg shadow-lg z-10  bg-opacity-50 backdrop-blur-xl">
@@ -148,14 +243,24 @@ const NavbarCustomer = () => {
           <div className="flex space-x-5 pl-2">
             <div className="relative" ref={dropdownRef}>
               <button onClick={toggleDropdown} className="flex items-center focus:outline-none hover:text-yellow-400 hover:scale-125">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-9">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                </svg>
+                {profileImage ? (
+                  <img
+                    src={profileImage || "/image/profile1.jpg"}
+                    alt="Profile"
+                    className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover border-2 border-white"
+                  />
+                ) : (
+                  <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                    </svg>
+                  </div>
+                )}
               </button>
               {dropdownOpen && (
                 <div className="absolute mt-2 w-60 bg-white border border-gray-200 rounded-lg shadow-lg">
                   <Link href="/page/homepage" legacyBehavior>
-                    <a className="flex items-center justify-center px-4 py-2 text-black hover:bg-yellow-400 hover:text-white rounded-lg">
+                    <a className="flex items-center justify-center px-4 py-2 text-black hover:bg-gradient-to-tr from-yellow-500 to-red-400 hover:text-white rounded-lg">
                       Home
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 ml-2">
                         <path strokeLinecap="round" strokeLinejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
@@ -163,7 +268,7 @@ const NavbarCustomer = () => {
                     </a>
                   </Link>
                   <Link href="/page/profile" legacyBehavior>
-                    <a className="flex items-center justify-center px-4 py-2 text-black hover:bg-yellow-400 hover:text-white rounded-lg">
+                    <a className="flex items-center justify-center px-4 py-2 text-black hover:bg-gradient-to-tr from-yellow-500 to-red-400 hover:text-white rounded-lg">
                       Account
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 ml-2">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
@@ -183,15 +288,16 @@ const NavbarCustomer = () => {
               )}
             </div>
             <Link href="/page/homepage" legacyBehavior>
-              <a className="text-black text-3xl md:text-4xl font-bold hover:text-yellow-400 hover:scale-125">UFA99</a>
+              <a className="text-black text-3xl md:text-4xl font-bold hover:text-yellow-400 hover:scale-125 underline decoration-double">UFA99</a>
             </Link>
-            <div className='bg-gradient-to-tr from-yellow-400 to-red-300 p-2 rounded-full flex items-center hover:bg-yellow-500 hover:text-white cursor-pointer hover:scale-125'>
+
+            {/* <div className='bg-gradient-to-tr from-yellow-400 to-red-300 px-3 rounded-full flex items-center hover:bg-yellow-500 hover:text-white cursor-pointer hover:scale-125'>
               <Link href="/page/cart" legacyBehavior>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-7">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
                 </svg>
               </Link>
-            </div>
+            </div> */}
             <div>
 
             </div>
@@ -207,6 +313,27 @@ const NavbarCustomer = () => {
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
           />
+          {/* <div className="relative" ref={categoriesRef}>
+            <button 
+              className="bg-gradient-to-tr from-yellow-400 to-red-300 px-4 py-2 rounded-lg hover:bg-yellow-500 hover:text-white cursor-pointer"
+              onClick={() => setCategoriesOpen(!categoriesOpen)}
+            >
+              Categories
+            </button>
+            {categoriesOpen && (
+              <div className="absolute mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg">
+                {categories.map((category) => (
+                  <div 
+                    key={category.id} 
+                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                    onClick={() => handleCategoryClick(category.id)}
+                  >
+                    {category.name}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div> */}
         </div>
 
         {/* icon contact////////////////////////////////////////////////// */}

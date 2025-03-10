@@ -3,7 +3,7 @@ import Image from "next/image";
 import Navbar from "./components/Navbar";
 import logo from '../app/images/Logo.png';
 import Slideimage from './components/Slideimage';
-import Productpage from './page/product/page';
+import ProductpageNouser from './page/product_copy/page';
 import ButtonMain from "./components/ButtonMain";
 import ProducttPage from './page/product-1/page';
 import ContactPage from './page/contact/page';
@@ -33,7 +33,7 @@ export default function Home() {
             <Slideimage />
           </div>
           <div id="auction" className="w-full bg-white mx-0">
-            <Productpage />
+            <ProductpageNouser />
           </div>
           <div id="product_v1" className="pt-2 w-full h-auto bg-[#787878] mx-0 p-4">
             <ProducttPage />

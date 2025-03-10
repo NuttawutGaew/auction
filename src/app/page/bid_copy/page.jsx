@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import NavbarBids from '../../components/NavbarBids';
+import NavbarBidscopy from '../../components/NavbarBidscopy';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -104,6 +104,7 @@ function ProductDetailsPage() {
         setMinimumBidIncrement(auction.minimumBidIncrement);
         setDescription(auction.description); // Set the description state
 
+
         // ✅ ตั้งเวลาหมดอายุ
         const endTime = new Date(auction.expiresAt).getTime();
         const interval = setInterval(() => {
@@ -145,11 +146,10 @@ function ProductDetailsPage() {
     }
   };
 
-
   // 📌 ฟังก์ชันสำหรับการประมูล
   const handleBid = async () => {
     if (!bidAmount || bidAmount < currentPrice + minimumBidIncrement) {
-      alert(`กรุณาใส่ราคาที่มากกว่าหรือเท่ากับ ${currentPrice + minimumBidIncrement} บาท`);
+      toast.error(`Please enter a price greater than or equal to ${currentPrice + minimumBidIncrement} บาท`);
       return;
     }
 
@@ -172,12 +172,18 @@ function ProductDetailsPage() {
             </div>
           </div>
         );
-        // window.location.reload();
       } else {
-        alert(data.message);
+        toast.error(<div>
+          Please log in to place a bid.
+          <div>
+          <button onClick={() => router.push('/page/login')} className="bg-red-500 text-white py-1 px-2 rounded mt-2">
+              Confirm
+            </button>
+          </div>
+        </div>);
       }
     } catch (err) {
-      alert('เกิดข้อผิดพลาด!');
+      toast.error('An error occurred.!');
     }
   };
 
@@ -210,7 +216,7 @@ function ProductDetailsPage() {
 
   return (
     <div>
-      <NavbarBids />
+      <NavbarBidscopy />
       <ToastContainer />
       <div className="max-w-screen-2xl mx-auto bg-white pt-20 m-10 p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -237,13 +243,13 @@ function ProductDetailsPage() {
             </div>
 
             <div>
-              <h2 className="text-xl font-semibold mb-2">Product details</h2>
+              <h2 className="text-xl font-semibold mb-2 ">Product details</h2>
               <span className="text-lg font-sm text-gray-500 pl-4">{description}</span>
             </div>
 
-            <div className="space-y-4">
-              <div>
-                <label className="block text-gray-600 ml-8 mb-2">Place You Bid :</label>
+            <div className="space-y-4 ">
+              <div className=' border-t '>
+                <label className="block text-gray-600 ml-8 mb-2 mt-4">Place You Bid :</label>
                 <div className="flex items-center space-x-2 justify-center">
                   <button onClick={handleDecrementBid} className="bg-[#FF0000] hover:bg-red-400 text-black font-bold py-2 px-4 rounded">
                     -
@@ -261,9 +267,24 @@ function ProductDetailsPage() {
                 </div>
               </div>
               <div className='flex justify-center items-center space-x-4 mt-4'>
-                <button className="w-full bg-[#00FFFF] text-white py-3 rounded-lg hover:bg-blue-600 mt-2" 
+                {/* <button className="w-full bg-[#00FFFF] text-white py-3 rounded-lg hover:bg-blue-600 mt-2" 
                   onClick={handleBid}>
                   Bid Now!
+                </button> */}
+                <button className="w-full bg-[#FF00FF] text-white py-3 rounded-lg hover:bg-purple-600 mt-2"
+                  onClick={() => {
+                    toast.info(
+                      <div>
+                        Do you want to go to the login page?
+                        <div>
+                          <button onClick={() => router.push('/page/login')} className="bg-blue-500 text-white py-1 px-2 rounded mt-2">
+                            Confirm
+                          </button>
+                        </div>
+                      </div>
+                      );
+                    }}>
+                  Login
                 </button>
                 <div className="flex justify-end">
                   <button
